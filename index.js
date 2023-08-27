@@ -32,23 +32,44 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // crate a collaction 
+    const coffeCollation = client.db('coffeeDB').collection('coffee')
+
+
+    // server side get method 
+
+    app.get('/coffee',async(req,res)=>{
+      const cursor = coffeCollation.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+    
+    // server side psot method 
+    app.post('/coffee',async(req,res)=>{
+      const newCoffe = req.body;
+      console.log(newCoffe)
+      const result = await coffeCollation.insertOne(newCoffe)
+      res.send(result)
+    })
+    
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
 
 
 
-
-
 app.get('/',(req,res)=>{
-    res.send('running server')
+  res.send('running server')
 })
+
 
 app.listen(port,()=>{
     console.log(`conunteded port : ${port}`)
